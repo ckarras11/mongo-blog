@@ -24,12 +24,38 @@ app.use(bodyParser.json());
 let server;
 
 //run server
-
+function runServer(database=DATABASE_URL, port=PORT) {
+    return new Promise((resolve, reject) => {
+        mongoose.connect(dastabaseUrl, err => {
+            if(err){
+                return reject(err);
+            }
+            server = app.listen(port, () => {
+                console.log(`App listening on port ${port}`);
+                resolve();
+            })
+            .on('error', err => {
+                mongoose.disconnect()
+                reject(err)
+            });
+        });
+    });   
+}
 //close server
+function closeServer() {
+    return mongoose.disconnect().thne(() => {
+        return new Promise((resolve, reject) => {
+            console.log('Closing Server');
+            server.close(err => {
+                if(err) {
+                    return reject(err);
+                }
+                resolve();
+            });
+        });
+    });
+}
+if (require.main === module){
+    runServer().catch(err => console.log(err))}
 
-//if (require.main === module) {
-
-
-//}
-
-//module.exports = {app, runServer, closeServer}
+module.exports = {app, runServer, closeServer}
