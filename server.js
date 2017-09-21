@@ -29,7 +29,15 @@ app.get('/posts', (req, res) => {
         });
 });
 //get/:id
-
+app.get('/posts/:id', (req, res) => {
+   Post
+        .findById(req.params.id)
+        .then(post => res.json(post.apiRepr()))
+        .catch(err => {
+            console.error(err)
+            return res.status(500).json({message: 'Internal server error'})
+        })
+})
 //post
 app.post('/posts', (req, res) => {
 
@@ -57,7 +65,27 @@ app.post('/posts', (req, res) => {
         });
 });
 //put
+app.put('/posts/:id', (req, res) => {
+    if(!(req.params.id && req.body.id && req.params.id === req.body.id)){
+        const message = (`Request path id ${req.params.id} and request body id ${req.body.id} must match`)
+        console.error(message);
+        return res.status(400).send(message);
+    }
+    const toUpdate = {};
+    const canUpdate = ['title', 'content', 'author' ]
 
+    canUpdate.forEach(field => {
+        if(field in req.body) {
+            toUpdate[field] = req.body[field]
+        }
+    })
+    Post
+        .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+        .then(post => res.status(204).end())
+        .catch(err => {
+            res.status(500).json({message: 'Internal server error'})
+        })
+})
 //delete
 
 let server;
