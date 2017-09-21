@@ -81,13 +81,22 @@ app.put('/posts/:id', (req, res) => {
     })
     Post
         .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-        .then(post => res.status(204).end())
+        .then(post => {
+            res.status(200).json(post.apiRepr())
+        })
         .catch(err => {
             res.status(500).json({message: 'Internal server error'})
         })
 })
 //delete
-
+app.delete('/posts/:id', (req, res) => {
+    Post
+        .findByIdAndRemove(req.params.id)
+        .then(post => res.status(204).end())
+        .catch(err => {
+            res.status(500).json({message: 'Internal server error'})
+        })
+})
 let server;
 
 //run server
