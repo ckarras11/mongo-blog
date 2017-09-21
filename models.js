@@ -12,7 +12,7 @@ const postSchema = mongoose.Schema({
 });
 //virtual author
 postSchema.virtual('authorName').get(function () {
-    return `${this.author.firstName} ${this.author.lastName}`.trim()
+    return (`${this.author.firstName} ${this.author.lastName}`.trim())
 })
 //apiRepr
 postSchema.methods.apiRepr = function () {
@@ -24,5 +24,5 @@ postSchema.methods.apiRepr = function () {
         created: this.created
     }
 }
-const Post = mongoose.model('Post', postSchema);
-module.export = {Post};
+const Post = mongoose.model('Post', postSchema, "Post");
+module.exports = {Post};
